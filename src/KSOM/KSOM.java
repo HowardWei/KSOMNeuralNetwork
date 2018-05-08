@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 public class KSOM {
 	private int neighborhoodWidth;
 	private List<Integer> printIntervals = new ArrayList<Integer>();
+	private int totalEpochs;
 	@SuppressWarnings("rawtypes")
 	private ArrayList[][] neurons; 
 	
@@ -34,6 +35,7 @@ public class KSOM {
 	
 	// training algorithm for the neural network
 	public void Train(int epochs, double[][] trainingInput) {
+		this.totalEpochs = epochs;
 		Boolean decreaseNeighborhood = false;
 		double winningDistance = Double.MAX_VALUE;
 		double tempDistance;
@@ -42,7 +44,7 @@ public class KSOM {
 
 		PrintNeuronMap(0);
 		// each epoch
-		for(int i = 0; i < epochs; i++) {
+		for(int i = 0; i < totalEpochs; i++) {
 			// each training input
 			for(int j = 0; j < trainingInput.length; j++) {	
 				winningDistance = Double.MAX_VALUE;
@@ -91,29 +93,46 @@ public class KSOM {
 		
 		for(int x = Xmin; x <= Xmax; x++) {
 			for(int y = Ymin; y <= Ymax; y++) {
-				UpdateWeight(epoch, x, y, input);
+				// scaling factor of 1 for no gradient
+				double scalingFactor = 1 - Math.sqrt(Math.pow(x - neuronX, 2) + Math.pow(y - neuronY, 2))/Math.sqrt(Math.pow(neighborhoodWidth, 2)*2);
+				
+				// TODO: find suitable scaling factors
+				
+				// made as a test, 1 if distance is 0, 0 if distance is max
+				// 1 - Math.pow((x - neuronX) + (y - neuronY), 2)/Math.pow(neighborhoodWidth*2, 2);
+				
+				// based off the euclidean distance relative to max euclidean distance
+				// 1 - Math.sqrt(Math.pow(x - neuronX, 2) + Math.pow(y - neuronY, 2))/Math.sqrt(Math.pow(neighborhoodWidth, 2)*2);
+				try {
+					if(scalingFactor < 0 || scalingFactor > 1) {
+						throw new Exception("scaling factor out of bounds with current scaling rule");
+					}
+					UpdateWeight(epoch, x, y, input, scalingFactor);
+				} catch (Exception e) {
+					System.out.println(e.toString());
+				}
 			}
 		}
 	}
 	
 	// update weights for winning neuron
 	@SuppressWarnings("unchecked")
-	private void UpdateWeight(int epoch, int neuronX, int neuronY, double[] input) {
+	private void UpdateWeight(int epoch, int neuronX, int neuronY, double[] input, double scalingFactor) {
 		double learningRate = GetLearningRate(epoch);
 		
 		// R
 		double oldWeight = (double)neurons[neuronX][neuronY].get(0);
-		double newWeight = oldWeight + learningRate*(input[0] - oldWeight);
+		double newWeight = oldWeight + scalingFactor*learningRate*(input[0] - oldWeight);
 		neurons[neuronX][neuronY].set(0, (double)newWeight);
 		
 		// G
 		oldWeight = (double)neurons[neuronX][neuronY].get(1);
-		newWeight = oldWeight + learningRate*(input[1] - oldWeight);
+		newWeight = oldWeight + scalingFactor*learningRate*(input[1] - oldWeight);
 		neurons[neuronX][neuronY].set(1, (double)newWeight);
 		
 		// B
 		oldWeight = (double)neurons[neuronX][neuronY].get(2);
-		newWeight = oldWeight + learningRate*(input[2] - oldWeight);
+		newWeight = oldWeight + scalingFactor*learningRate*(input[2] - oldWeight);
 		neurons[neuronX][neuronY].set(2, (double)newWeight);
 	}
 	
@@ -128,9 +147,9 @@ public class KSOM {
 	// returns learning rate a(k) with a(0) = 0.8, constant after 90th epoch
 	private double GetLearningRate(int epoch) {
 		if(epoch <= 90) {
-			return 0.8*(1 - epoch/1001);
+			return 0.8*(1 - epoch/(totalEpochs + 1));
 		} else {
-			return 0.8*(1 - 90/1001);
+			return 0.8*(1 - 90/(totalEpochs + 1));
 		}
 	}
 	
