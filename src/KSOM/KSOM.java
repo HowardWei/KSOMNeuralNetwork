@@ -39,7 +39,8 @@ public class KSOM {
 		double tempDistance;
 		int winningX = 0;
 		int winningY = 0;
-		
+
+		PrintNeuronMap(0);
 		// each epoch
 		for(int i = 0; i < epochs; i++) {
 			// each training input
@@ -64,9 +65,7 @@ public class KSOM {
 				decreaseNeighborhood = true;
 			}
 			
-			if(printIntervals.contains(i + 1)) {
-				PrintNeuronMap(i + 1);
-			}
+			PrintNeuronMap(i + 1);
 		}
 	}
 	
@@ -153,19 +152,21 @@ public class KSOM {
 	// prints 2D colored neuron array to file
 	private void PrintNeuronMap(int epoch) {
 		try {
-			BufferedImage coloredMap = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
-			
-			for(int i = 0; i < neurons.length; i++) {
-				for(int j = 0; j < neurons[i].length; j++) {
-					int Rvalue = (int) Math.rint((double)neurons[i][j].get(0)*255);
-					int Gvalue = (int) Math.rint((double)neurons[i][j].get(1)*255);
-					int Bvalue = (int) Math.rint((double)neurons[i][j].get(2)*255);
-					
-					Color neuronColor = new Color(Rvalue, Gvalue, Bvalue);
-					coloredMap.setRGB(i, j, neuronColor.getRGB());
+			if(printIntervals.contains(epoch)) {
+				BufferedImage coloredMap = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+				
+				for(int i = 0; i < neurons.length; i++) {
+					for(int j = 0; j < neurons[i].length; j++) {
+						int Rvalue = (int) Math.rint((double)neurons[i][j].get(0)*255);
+						int Gvalue = (int) Math.rint((double)neurons[i][j].get(1)*255);
+						int Bvalue = (int) Math.rint((double)neurons[i][j].get(2)*255);
+						
+						Color neuronColor = new Color(Rvalue, Gvalue, Bvalue);
+						coloredMap.setRGB(i, j, neuronColor.getRGB());
+					}
 				}
+				ImageIO.write(coloredMap, "jpg", new File("neuronMapColoredEpoch" + epoch + ".jpg"));
 			}
-			ImageIO.write(coloredMap, "jpg", new File("neuronMapColoredEpoch" + epoch + ".jpg"));
 		} catch (IOException e) {
 			System.out.println(e.toString());
 		}
