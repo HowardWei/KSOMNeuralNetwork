@@ -43,6 +43,7 @@ public class KSOM {
 		PrintNeuronMap(0);
 		// each epoch
 		for(int i = 0; i < epochs; i++) {
+			winningDistance = Double.MAX_VALUE;
 			// each training input
 			for(int j = 0; j < trainingInput.length; j++) {	
 				// find the winning neuron
