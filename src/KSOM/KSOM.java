@@ -35,9 +35,10 @@ public class KSOM {
 	
 	// training algorithm for the neural network
 	public void Train(int epochs, double[][] trainingInput) {
+		Random rand = new Random();
 		this.totalEpochs = epochs;
 		Boolean decreaseNeighborhood = false;
-		double winningDistance = Double.MAX_VALUE;
+		double winningDistance = Math.sqrt(3);
 		double tempDistance;
 		int winningX = 0;
 		int winningY = 0;
@@ -47,7 +48,7 @@ public class KSOM {
 		for(int i = 0; i < totalEpochs; i++) {
 			// each training input
 			for(int j = 0; j < trainingInput.length; j++) {	
-				winningDistance = Double.MAX_VALUE;
+				winningDistance = Math.sqrt(3);
 				// find the winning neuron
 				for(int x = 0; x < 100; x++) {
 					for(int y = 0; y < 100; y++) {
@@ -56,6 +57,11 @@ public class KSOM {
 							winningDistance = tempDistance;
 							winningX = x;
 							winningY = y;
+						} else if (tempDistance == winningDistance) {
+							if(rand.nextFloat() > 0.5) {
+								winningX = x;
+								winningY = y;
+							}
 						}
 					}
 				}
@@ -93,9 +99,13 @@ public class KSOM {
 		
 		for(int x = Xmin; x <= Xmax; x++) {
 			for(int y = Ymin; y <= Ymax; y++) {
-				// scaling factor of 1 for no gradient
-				double scalingFactor = 1 - Math.sqrt(Math.pow(x - neuronX, 2) + Math.pow(y - neuronY, 2))/Math.sqrt(Math.pow(neighborhoodWidth, 2)*2);
+				double scalingFactor;
 				
+				if(neighborhoodWidth != 0) {
+					scalingFactor =  0.1*(1 - Math.sqrt(Math.pow(x - neuronX, 2) + Math.pow(y - neuronY, 2))/Math.sqrt(Math.pow(neighborhoodWidth, 2)*2));
+				} else {
+					scalingFactor = 1;
+				}
 				// TODO: find suitable scaling factors
 				
 				// made as a test, 1 if distance is 0, 0 if distance is max
@@ -107,6 +117,7 @@ public class KSOM {
 					if(scalingFactor < 0 || scalingFactor > 1) {
 						throw new Exception("scaling factor out of bounds with current scaling rule");
 					}
+					//System.out.println("epoch -> " + epoch + " scaling factor -> " + scalingFactor);
 					UpdateWeight(epoch, x, y, input, scalingFactor);
 				} catch (Exception e) {
 					System.out.println(e.toString());

@@ -25,10 +25,10 @@ public class KSOMmain {
 				// other shades
 				{51,0,0},{0,51,0},{0,0,51}};
 		trainingInput = NormalizeInputData(trainingInput);
-		PrintArray(trainingInput);
+		// PrintArray(trainingInput);
 		
 		KSOM ksom = new KSOM();
-		ksom.SetPrintIntervals(Arrays.asList(0, 20, 40, 100, 1000));
+		ksom.SetPrintIntervals(Arrays.asList(20, 40, 100, 1000));
 		ksom.Train(1000, trainingInput);
 	}
 	
