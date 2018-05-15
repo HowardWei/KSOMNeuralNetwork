@@ -215,7 +215,7 @@ public class KSOM {
 	}
 	
 	private NeuronTypes GetNeuronType(double[] neuron) {
-		if(neuron[0] >= neuron[1] && neuron[0] >= neuron[2]) {
+		if(neuron[0] > neuron[1] && neuron[0] > neuron[2]) {
 			if(neuron[1] > neuron[2]) {
 				// R >= G >= B
 				return NeuronTypes.TYPE_A;
@@ -223,8 +223,34 @@ public class KSOM {
 				// R >= B >= G
 				return NeuronTypes.TYPE_B;
 			}
-		} else if (neuron[1] >= neuron[0] && neuron[1] >= neuron[2]) {
+		} else if (neuron[1] > neuron[0] && neuron[1] > neuron[2]) {
 			if(neuron[0] > neuron[2]) {
+				// G >= R >= B
+				return NeuronTypes.TYPE_C;
+			} else {
+				// G >= B >= R
+				return NeuronTypes.TYPE_D;
+			}
+		} else if (neuron[2] > neuron[0] && neuron[2] > neuron[1]) {
+			if(neuron[0] > neuron[1]) {
+				// B >= R >= B
+				return NeuronTypes.TYPE_E;
+			} else {
+				// B >= G >= R
+				return NeuronTypes.TYPE_F;
+			}
+		}
+		
+		if(neuron[0] >= neuron[1] && neuron[0] >= neuron[2]) {
+			if(neuron[1] >= neuron[2]) {
+				// R >= G >= B
+				return NeuronTypes.TYPE_A;
+			} else {
+				// R >= B >= G
+				return NeuronTypes.TYPE_B;
+			}
+		} else if (neuron[1] >= neuron[0] && neuron[1] >= neuron[2]) {
+			if(neuron[0] >= neuron[2]) {
 				// G >= R >= B
 				return NeuronTypes.TYPE_C;
 			} else {
@@ -240,7 +266,6 @@ public class KSOM {
 				return NeuronTypes.TYPE_F;
 			}
 		}
-		
 		
 		return null;
 	}
