@@ -16,6 +16,7 @@ public class KSOM {
 	private int totalEpochs;
 	@SuppressWarnings("rawtypes")
 	private ArrayList[][] neurons; 
+	private enum NeuronTypes { TYPE_A, TYPE_B, TYPE_C, TYPE_D, TYPE_E, TYPE_F }
 	
 	public KSOM() {
 		neighborhoodWidth = 20;
@@ -53,14 +54,16 @@ public class KSOM {
 				for(int x = 0; x < 100; x++) {
 					for(int y = 0; y < 100; y++) {
 						tempDistance = CalculateDistance(x, y, trainingInput[j]);
-						if(tempDistance < winningDistance) {
-							winningDistance = tempDistance;
-							winningX = x;
-							winningY = y;
-						} else if (tempDistance == winningDistance) {
-							if(rand.nextFloat() > 0.5) {
+						if (GetNeuronType(trainingInput[j]) == GetNeuronType(x, y)) {
+							if(tempDistance < winningDistance) {
+								winningDistance = tempDistance;
 								winningX = x;
 								winningY = y;
+							} else if (tempDistance == winningDistance) {
+								if(rand.nextFloat() > 0.5) {
+									winningX = x;
+									winningY = y;
+								}
 							}
 						}
 					}
@@ -102,7 +105,7 @@ public class KSOM {
 				double scalingFactor;
 				
 				if(neighborhoodWidth != 0) {
-					scalingFactor =  0.1*(1 - Math.sqrt(Math.pow(x - neuronX, 2) + Math.pow(y - neuronY, 2))/Math.sqrt(Math.pow(neighborhoodWidth, 2)*2));
+					scalingFactor =  1;//0.2*(1 - Math.sqrt(Math.pow(x - neuronX, 2) + Math.pow(y - neuronY, 2))/Math.sqrt(Math.pow(neighborhoodWidth, 2)*2));
 				} else {
 					scalingFactor = 1;
 				}
@@ -201,5 +204,69 @@ public class KSOM {
 		} catch (IOException e) {
 			System.out.println(e.toString());
 		}
+	}
+	
+	private NeuronTypes GetNeuronType(int neuronX, int neuronY) {
+		double[] tempArray = new double[3];
+		tempArray[0] = (double)neurons[neuronX][neuronY].get(0);
+		tempArray[1] = (double)neurons[neuronX][neuronY].get(1);
+		tempArray[2] = (double)neurons[neuronX][neuronY].get(2);
+		return GetNeuronType(tempArray);
+	}
+	
+	private NeuronTypes GetNeuronType(double[] neuron) {
+		if(neuron[0] > neuron[1] && neuron[0] > neuron[2]) {
+			if(neuron[1] > neuron[2]) {
+				// R >= G >= B
+				return NeuronTypes.TYPE_A;
+			} else {
+				// R >= B >= G
+				return NeuronTypes.TYPE_B;
+			}
+		} else if (neuron[1] > neuron[0] && neuron[1] > neuron[2]) {
+			if(neuron[0] > neuron[2]) {
+				// G >= R >= B
+				return NeuronTypes.TYPE_C;
+			} else {
+				// G >= B >= R
+				return NeuronTypes.TYPE_D;
+			}
+		} else if (neuron[2] > neuron[0] && neuron[2] > neuron[1]) {
+			if(neuron[0] > neuron[1]) {
+				// B >= R >= B
+				return NeuronTypes.TYPE_E;
+			} else {
+				// B >= G >= R
+				return NeuronTypes.TYPE_F;
+			}
+		}
+		
+		if(neuron[0] >= neuron[1] && neuron[0] >= neuron[2]) {
+			if(neuron[1] >= neuron[2]) {
+				// R >= G >= B
+				return NeuronTypes.TYPE_A;
+			} else {
+				// R >= B >= G
+				return NeuronTypes.TYPE_B;
+			}
+		} else if (neuron[1] >= neuron[0] && neuron[1] >= neuron[2]) {
+			if(neuron[0] >= neuron[2]) {
+				// G >= R >= B
+				return NeuronTypes.TYPE_C;
+			} else {
+				// G >= B >= R
+				return NeuronTypes.TYPE_D;
+			}
+		} else if (neuron[2] >= neuron[0] && neuron[2] >= neuron[1]) {
+			if(neuron[0] >= neuron[1]) {
+				// B >= R >= B
+				return NeuronTypes.TYPE_E;
+			} else {
+				// B >= G >= R
+				return NeuronTypes.TYPE_F;
+			}
+		}
+		
+		return null;
 	}
 }
