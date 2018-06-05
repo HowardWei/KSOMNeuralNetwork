@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -16,6 +17,8 @@ public class KSOM {
 	private int totalEpochs;
 	@SuppressWarnings("rawtypes")
 	private ArrayList[][] neurons; 
+	
+	private enum NeuronTypes { TYPE_A, TYPE_B, TYPE_C, TYPE_D, TYPE_E, TYPE_F }
 	
 	public KSOM() {
 		neighborhoodWidth = 20;
@@ -37,9 +40,10 @@ public class KSOM {
 	public void Train(int epochs, double[][] trainingInput) {
 		Random rand = new Random();
 		this.totalEpochs = epochs;
-		Boolean decreaseNeighborhood = false;
+		boolean decreaseNeighborhood = false;
 		double winningDistance = Math.sqrt(3);
 		double tempDistance;
+		int originalNeighborhoodWidth = this.neighborhoodWidth;
 		int winningX = 0;
 		int winningY = 0;
 
@@ -53,25 +57,30 @@ public class KSOM {
 				for(int x = 0; x < 100; x++) {
 					for(int y = 0; y < 100; y++) {
 						tempDistance = CalculateDistance(x, y, trainingInput[j]);
-						if(tempDistance < winningDistance) {
-							winningDistance = tempDistance;
-							winningX = x;
-							winningY = y;
-						} else if (tempDistance == winningDistance) {
-							if(rand.nextFloat() > 0.5) {
+						if (GetNeuronType(trainingInput[j]) == GetNeuronType(x, y)) {
+							if(tempDistance < winningDistance) {
+								winningDistance = tempDistance;
 								winningX = x;
 								winningY = y;
+							} else if (tempDistance == winningDistance) {
+								if(rand.nextFloat() > 0.5) {
+									winningX = x;
+									winningY = y;
+								}
 							}
 						}
 					}
 				}
 				UpdateNeighborhood(i + 1, winningX, winningY, trainingInput[j]);
 			}
-			if(decreaseNeighborhood && neighborhoodWidth > 0) {
-				neighborhoodWidth -= 1;
-				decreaseNeighborhood = false;
-			} else {
-				decreaseNeighborhood = true;
+			
+			if(neighborhoodWidth > 0) {
+				if(decreaseNeighborhood == true) {
+					neighborhoodWidth -= 1;
+					decreaseNeighborhood = false;
+				} else {
+					decreaseNeighborhood = true;
+				}
 			}
 			
 			PrintNeuronMap(i + 1);
@@ -99,51 +108,28 @@ public class KSOM {
 		
 		for(int x = Xmin; x <= Xmax; x++) {
 			for(int y = Ymin; y <= Ymax; y++) {
-				double scalingFactor;
-				
-				if(neighborhoodWidth != 0) {
-					scalingFactor =  0.1*(1 - Math.sqrt(Math.pow(x - neuronX, 2) + Math.pow(y - neuronY, 2))/Math.sqrt(Math.pow(neighborhoodWidth, 2)*2));
-				} else {
-					scalingFactor = 1;
-				}
-				// TODO: find suitable scaling factors
-				
-				// made as a test, 1 if distance is 0, 0 if distance is max
-				// 1 - Math.pow((x - neuronX) + (y - neuronY), 2)/Math.pow(neighborhoodWidth*2, 2);
-				
-				// based off the euclidean distance relative to max euclidean distance
-				// 1 - Math.sqrt(Math.pow(x - neuronX, 2) + Math.pow(y - neuronY, 2))/Math.sqrt(Math.pow(neighborhoodWidth, 2)*2);
-				try {
-					if(scalingFactor < 0 || scalingFactor > 1) {
-						throw new Exception("scaling factor out of bounds with current scaling rule");
-					}
-					//System.out.println("epoch -> " + epoch + " scaling factor -> " + scalingFactor);
-					UpdateWeight(epoch, x, y, input, scalingFactor);
-				} catch (Exception e) {
-					System.out.println(e.toString());
-				}
+				double learningRate = GetLearningRate(epoch, neuronX, neuronY, x, y);
+				UpdateWeight(learningRate, x, y, input);
 			}
 		}
 	}
 	
 	// update weights for winning neuron
 	@SuppressWarnings("unchecked")
-	private void UpdateWeight(int epoch, int neuronX, int neuronY, double[] input, double scalingFactor) {
-		double learningRate = GetLearningRate(epoch);
-		
+	private void UpdateWeight(double learningRate, int neuronX, int neuronY, double[] input) {		
 		// R
 		double oldWeight = (double)neurons[neuronX][neuronY].get(0);
-		double newWeight = oldWeight + scalingFactor*learningRate*(input[0] - oldWeight);
+		double newWeight = oldWeight + learningRate*(input[0] - oldWeight);
 		neurons[neuronX][neuronY].set(0, (double)newWeight);
 		
 		// G
 		oldWeight = (double)neurons[neuronX][neuronY].get(1);
-		newWeight = oldWeight + scalingFactor*learningRate*(input[1] - oldWeight);
+		newWeight = oldWeight + learningRate*(input[1] - oldWeight);
 		neurons[neuronX][neuronY].set(1, (double)newWeight);
 		
 		// B
 		oldWeight = (double)neurons[neuronX][neuronY].get(2);
-		newWeight = oldWeight + scalingFactor*learningRate*(input[2] - oldWeight);
+		newWeight = oldWeight + learningRate*(input[2] - oldWeight);
 		neurons[neuronX][neuronY].set(2, (double)newWeight);
 	}
 	
@@ -156,12 +142,15 @@ public class KSOM {
 	}
 	
 	// returns learning rate a(k) with a(0) = 0.8, constant after 90th epoch
-	private double GetLearningRate(int epoch) {
-		if(epoch <= 90) {
-			return 0.8*(1 - epoch/(totalEpochs + 1));
-		} else {
-			return 0.8*(1 - 90/(totalEpochs + 1));
-		}
+	private double GetLearningRate(int epoch, int winningX, int winningY, int neuronX, int neuronY) {
+		// adjustment to account for epoch, higher epochs have less effect
+		double timeAdjustment = 1 - epoch/(totalEpochs + 1);
+		// adjustment to account for distance from winning neuron, further neurons have less effect
+		double adjustment = neighborhoodWidth - (double)epoch/100;
+		if (adjustment <= 0)
+			adjustment = 0.1;
+		double distanceAdjustment = Math.exp(-GetDistance(winningX, winningY, neuronX, neuronX) / adjustment);
+		return timeAdjustment*distanceAdjustment;
 	}
 	
 	// initializes the weights of each neuron of the 2D neuron array
@@ -201,5 +190,49 @@ public class KSOM {
 		} catch (IOException e) {
 			System.out.println(e.toString());
 		}
+	}
+	
+	private NeuronTypes GetNeuronType(int neuronX, int neuronY) {
+		double[] tempArray = new double[3];
+		tempArray[0] = (double)neurons[neuronX][neuronY].get(0);
+		tempArray[1] = (double)neurons[neuronX][neuronY].get(1);
+		tempArray[2] = (double)neurons[neuronX][neuronY].get(2);
+		return GetNeuronType(tempArray);
+	}
+	
+	private NeuronTypes GetNeuronType(double[] neuron) {
+
+		// this is somewhat lazy copy-paste coding... need to fix
+		if(neuron[0] >= neuron[1] && neuron[0] >= neuron[2]) {
+			if(neuron[1] >= neuron[2]) {
+				// R >= G >= B
+				return NeuronTypes.TYPE_A;
+			} else {
+				// R >= B >= G
+				return NeuronTypes.TYPE_B;
+			}
+		} else if (neuron[1] >= neuron[0] && neuron[1] >= neuron[2]) {
+			if(neuron[0] >= neuron[2]) {
+				// G >= R >= B
+				return NeuronTypes.TYPE_C;
+			} else {
+				// G >= B >= R
+				return NeuronTypes.TYPE_D;
+			}
+		} else if (neuron[2] >= neuron[0] && neuron[2] >= neuron[1]) {
+			if(neuron[0] >= neuron[1]) {
+				// B >= R >= B
+				return NeuronTypes.TYPE_E;
+			} else {
+				// B >= G >= R
+				return NeuronTypes.TYPE_F;
+			}
+		}
+		
+		return null;
+	}
+	
+	private double GetDistance(int x1, int y1, int x2, int y2) {
+		return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
 	}
 }

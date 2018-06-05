@@ -27,8 +27,8 @@ public class KSOMmain {
 		trainingInput = NormalizeInputData(trainingInput);
 		// PrintArray(trainingInput);
 		
-		KSOM ksom = new KSOM();
-		ksom.SetPrintIntervals(Arrays.asList(20, 40, 100, 1000));
+		KSOM ksom = new KSOM(40, 100, 100);
+		ksom.SetPrintIntervals(Arrays.asList(0, 20, 40, 100, 1000));
 		ksom.Train(1000, trainingInput);
 	}
 	
