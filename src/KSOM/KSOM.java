@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 
 public class KSOM {
 	private int neighborhoodWidth;
+	private int originalNeighborhoodWidth;
 	private List<Integer> printIntervals = new ArrayList<Integer>();
 	private int totalEpochs;
 	@SuppressWarnings("rawtypes")
@@ -22,12 +23,14 @@ public class KSOM {
 	
 	public KSOM() {
 		neighborhoodWidth = 20;
+		originalNeighborhoodWidth = 20;
 		neurons = new ArrayList[100][100];
 		neurons = InitializeNeurons(neurons);
 	}
 	
 	public KSOM(int neighborhoodWidth, int neuronGridX, int neuronGridY) {
 		this.neighborhoodWidth = neighborhoodWidth;
+		originalNeighborhoodWidth = neighborhoodWidth;
 		neurons = new ArrayList[neuronGridX][neuronGridY];
 		neurons = InitializeNeurons(neurons);
 	}
@@ -37,13 +40,12 @@ public class KSOM {
 	}
 	
 	// training algorithm for the neural network
-	public void Train(int epochs, double[][] trainingInput) {
+	public void Train(int epochs, ArrayList<double[]> trainingInput) {
 		Random rand = new Random();
 		this.totalEpochs = epochs;
 		boolean decreaseNeighborhood = false;
 		double winningDistance = Math.sqrt(3);
 		double tempDistance;
-		int originalNeighborhoodWidth = this.neighborhoodWidth;
 		int winningX = 0;
 		int winningY = 0;
 
@@ -51,13 +53,13 @@ public class KSOM {
 		// each epoch
 		for(int i = 0; i < totalEpochs; i++) {
 			// each training input
-			for(int j = 0; j < trainingInput.length; j++) {	
+			for(int j = 0; j < trainingInput.size(); j++) {	
 				winningDistance = Math.sqrt(3);
 				// find the winning neuron
-				for(int x = 0; x < 100; x++) {
-					for(int y = 0; y < 100; y++) {
-						tempDistance = CalculateDistance(x, y, trainingInput[j]);
-						if (GetNeuronType(trainingInput[j]) == GetNeuronType(x, y)) {
+				for(int x = 0; x < neurons.length; x++) {
+					for(int y = 0; y < neurons[x].length; y++) {
+						tempDistance = CalculateDistance(x, y, trainingInput.get(j));
+						if (GetNeuronType(trainingInput.get(j)) == GetNeuronType(x, y)) {
 							if(tempDistance < winningDistance) {
 								winningDistance = tempDistance;
 								winningX = x;
@@ -71,7 +73,7 @@ public class KSOM {
 						}
 					}
 				}
-				UpdateNeighborhood(i + 1, winningX, winningY, trainingInput[j]);
+				UpdateNeighborhood(i + 1, winningX, winningY, trainingInput.get(j));
 			}
 			
 			if(neighborhoodWidth > 0) {
@@ -143,13 +145,18 @@ public class KSOM {
 	
 	// returns learning rate a(k) with a(0) = 0.8, constant after 90th epoch
 	private double GetLearningRate(int epoch, int winningX, int winningY, int neuronX, int neuronY) {
+		double distance = GetDistance(winningX, winningY, neuronX, neuronX);
+		
 		// adjustment to account for epoch, higher epochs have less effect
-		double timeAdjustment = 1 - epoch/(totalEpochs + 1);
+		double timeAdjustment = 0.8*(1 - epoch/(totalEpochs + 1));
+
 		// adjustment to account for distance from winning neuron, further neurons have less effect
+		double distanceAdjustment;
 		double adjustment = neighborhoodWidth - (double)epoch/100;
-		if (adjustment <= 0)
+		if (adjustment <= 0) {
 			adjustment = 0.1;
-		double distanceAdjustment = Math.exp(-GetDistance(winningX, winningY, neuronX, neuronX) / adjustment);
+		}
+		distanceAdjustment = Math.exp(-distance / adjustment);
 		return timeAdjustment*distanceAdjustment;
 	}
 	
@@ -232,7 +239,22 @@ public class KSOM {
 		return null;
 	}
 	
+	// function to normalize input data to values in [0,1]
+	public static ArrayList<double[]> NormalizeInputData(ArrayList<double[]> trainingInput) {
+		for(int i = 0; i < trainingInput.size(); i++) {
+			for(int j = 0; j < trainingInput.get(i).length; j++) {
+				trainingInput.get(i)[j] = (double)trainingInput.get(i)[j]/255;
+			}
+		}
+		return trainingInput;
+	}
+	
 	private double GetDistance(int x1, int y1, int x2, int y2) {
 		return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+	}
+	
+	public void ResetKSOM() {
+		InitializeNeurons(neurons);
+		neighborhoodWidth = originalNeighborhoodWidth;
 	}
 }
