@@ -85,6 +85,7 @@ public class KSOM {
 				}
 			}
 			
+			Collections.shuffle(trainingInput);
 			PrintNeuronMap(i + 1);
 		}
 	}
