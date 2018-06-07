@@ -52,6 +52,7 @@ public class KSOM {
 		PrintNeuronMap(0);
 		// each epoch
 		for(int i = 0; i < totalEpochs; i++) {
+			Collections.shuffle(trainingInput);
 			// each training input
 			for(int j = 0; j < trainingInput.size(); j++) {	
 				winningDistance = Math.sqrt(3);
@@ -84,8 +85,6 @@ public class KSOM {
 					decreaseNeighborhood = true;
 				}
 			}
-			
-			Collections.shuffle(trainingInput);
 			PrintNeuronMap(i + 1);
 		}
 	}
