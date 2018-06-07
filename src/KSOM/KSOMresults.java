@@ -80,7 +80,7 @@ public class KSOMresults extends JFrame {
 		lblEpoch_4.setBounds(970, 28, 140, 33);
 		contentPane.add(lblEpoch_4);
 		
-		JButton btnNewButton = new JButton("New button");
+		JButton btnNewButton = new JButton("Refresh");
 		btnNewButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
