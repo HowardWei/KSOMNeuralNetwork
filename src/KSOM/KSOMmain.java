@@ -41,9 +41,9 @@ public class KSOMmain {
 		trainingInput.add(new double[]{0,51,0});
 		trainingInput.add(new double[]{0,0,51});
 		
-		KSOM ksom = new KSOM(30, 100, 100);
-		trainingInput = KSOM.NormalizeInputData(trainingInput);
-		ksom.SetPrintIntervals(Arrays.asList(0, 20, 40, 100, 1000));
-		ksom.Train(1000, trainingInput);
+		// KSOM ksom = new KSOM(30, 100, 100);
+		// trainingInput = KSOM.NormalizeInputData(trainingInput);
+		// ksom.SetPrintIntervals(Arrays.asList(0, 20, 40, 100, 1000));
+		// ksom.Train(1000, trainingInput);
 	}
 } 

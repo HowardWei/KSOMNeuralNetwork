@@ -36,103 +36,126 @@ public class KSOMgui {
 	 */
 	public static void main(String[] args) {
 		Display display = Display.getDefault();
-		Shell shell = new Shell();
-		shell.setSize(400, 474);
-		shell.setText("SWT Application");
-		shell.setLayout(null);
+		Shell shlKsomNeuralNetwork = new Shell();
+		shlKsomNeuralNetwork.setSize(400, 474);
+		shlKsomNeuralNetwork.setText("KSOM Neural Network");
+		shlKsomNeuralNetwork.setLayout(null);
 		
 		trainingInput = new ArrayList<double[]>();
 		
-		Label lblKsomDimensions = new Label(shell, SWT.NONE);
+		Label lblKsomDimensions = new Label(shlKsomNeuralNetwork, SWT.NONE);
 		lblKsomDimensions.setBounds(5, 5, 113, 21);
 		lblKsomDimensions.setText("KSOM Properties");
 		
-		Label lblRows = new Label(shell, SWT.NONE);
+		Label lblRows = new Label(shlKsomNeuralNetwork, SWT.NONE);
 		lblRows.setBounds(5, 32, 129, 21);
 		lblRows.setAlignment(SWT.RIGHT);
 		lblRows.setText("Rows:");
 		
-		rowsInput = new Text(shell, SWT.BORDER);
+		rowsInput = new Text(shlKsomNeuralNetwork, SWT.BORDER);
 		rowsInput.setBounds(140, 30, 127, 24);
 		
-		Label lblNeighborhoodSize = new Label(shell, SWT.NONE);
+		Label lblNeighborhoodSize = new Label(shlKsomNeuralNetwork, SWT.NONE);
 		lblNeighborhoodSize.setBounds(5, 89, 131, 21);
 		lblNeighborhoodSize.setText("Neighborhood size:");
 		
-		neighborhoodSizeInput = new Text(shell, SWT.BORDER);
+		neighborhoodSizeInput = new Text(shlKsomNeuralNetwork, SWT.BORDER);
 		neighborhoodSizeInput.setBounds(140, 87, 127, 24);
 		
-		Label lblColumns = new Label(shell, SWT.NONE);
+		Label lblColumns = new Label(shlKsomNeuralNetwork, SWT.NONE);
 		lblColumns.setBounds(5, 62, 131, 21);
 		lblColumns.setAlignment(SWT.RIGHT);
 		lblColumns.setText("Columns:");
 		
-		colsInput = new Text(shell, SWT.BORDER);
+		colsInput = new Text(shlKsomNeuralNetwork, SWT.BORDER);
 		colsInput.setBounds(140, 59, 127, 24);
 
-		Button btnGenerate = new Button(shell, SWT.NONE);
+		Button btnGenerate = new Button(shlKsomNeuralNetwork, SWT.NONE);
 		btnGenerate.setBounds(140, 117, 127, 26);
 		btnGenerate.setText("Generate");
 		
-		Label lblTrainingData = new Label(shell, SWT.NONE);
+		Label lblTrainingData = new Label(shlKsomNeuralNetwork, SWT.NONE);
 		lblTrainingData.setBounds(5, 149, 87, 21);
 		lblTrainingData.setText("Training Data");
 		
-		Button btnSelectColor = new Button(shell, SWT.NONE);
+		Button btnSelectColor = new Button(shlKsomNeuralNetwork, SWT.NONE);
 		btnSelectColor.setBounds(140, 176, 127, 26);
 		btnSelectColor.setText("Select Color");
 		
-		Label lblR = new Label(shell, SWT.NONE);
+		Label lblR = new Label(shlKsomNeuralNetwork, SWT.NONE);
 		lblR.setAlignment(SWT.RIGHT);
 		lblR.setBounds(107, 208, 27, 21);
 		lblR.setText("R:");
 		
-		Glevels = new Text(shell, SWT.BORDER);
+		Glevels = new Text(shlKsomNeuralNetwork, SWT.BORDER);
 		Glevels.setBounds(140, 260, 127, 24);
 		
-		Label lblG = new Label(shell, SWT.NONE);
+		Label lblG = new Label(shlKsomNeuralNetwork, SWT.NONE);
 		lblG.setAlignment(SWT.RIGHT);
 		lblG.setBounds(107, 262, 27, 21);
 		lblG.setText("G:");
 		
-		Blevels = new Text(shell, SWT.BORDER);
+		Blevels = new Text(shlKsomNeuralNetwork, SWT.BORDER);
 		Blevels.setBounds(140, 233, 127, 24);
 		
-		Label lblB = new Label(shell, SWT.NONE);
+		Label lblB = new Label(shlKsomNeuralNetwork, SWT.NONE);
 		lblB.setAlignment(SWT.RIGHT);
 		lblB.setBounds(107, 235, 27, 21);
 		lblB.setText("B:");
 		
-		Rlevels = new Text(shell, SWT.BORDER);
+		Rlevels = new Text(shlKsomNeuralNetwork, SWT.BORDER);
 		Rlevels.setBounds(140, 206, 127, 24);
 		
-		Button btnAddToTraining = new Button(shell, SWT.NONE);
+		Button btnAddToTraining = new Button(shlKsomNeuralNetwork, SWT.NONE);
 		btnAddToTraining.setBounds(140, 290, 127, 26);
-		btnAddToTraining.setText("Add Training Input");
+		btnAddToTraining.setText("Add Input");
 		
-		Button btnTrainButton = new Button(shell, SWT.NONE);
-		btnTrainButton.setBounds(182, 394, 60, 26);
+		Button btnTrainButton = new Button(shlKsomNeuralNetwork, SWT.NONE);
+		btnTrainButton.setBounds(10, 394, 144, 26);
 		btnTrainButton.setText("Train");
 
-		Button btnReset = new Button(shell, SWT.NONE);
+		Button btnReset = new Button(shlKsomNeuralNetwork, SWT.NONE);
 		btnReset.setEnabled(false);
-		btnReset.setBounds(313, 394, 61, 26);
+		btnReset.setBounds(303, 394, 69, 26);
 		btnReset.setText("Reset");
 		
-		Label lblNewLabel = new Label(shell, SWT.NONE);
+		Label lblNewLabel = new Label(shlKsomNeuralNetwork, SWT.NONE);
 		lblNewLabel.setAlignment(SWT.RIGHT);
 		lblNewLabel.setBounds(65, 324, 69, 21);
 		lblNewLabel.setText("Epochs:");
 		
-		epochInput = new Text(shell, SWT.BORDER);
+		epochInput = new Text(shlKsomNeuralNetwork, SWT.BORDER);
 		epochInput.setBounds(140, 322, 127, 24);
 		
-		Button btnResults = new Button(shell, SWT.NONE);
+		Button btnResults = new Button(shlKsomNeuralNetwork, SWT.NONE);
 		btnResults.setEnabled(false);
-		btnResults.setBounds(248, 394, 59, 26);
+		btnResults.setBounds(160, 394, 137, 26);
 		btnResults.setText("Results");
 		
-		// handlers
+		Button btnNewButton = new Button(shlKsomNeuralNetwork, SWT.NONE);
+		btnNewButton.setBounds(272, 290, 102, 26);
+		btnNewButton.setText("View Inputs");
+		
+		Button btnUndo = new Button(shlKsomNeuralNetwork, SWT.NONE);
+		btnUndo.setBounds(49, 290, 85, 26);
+		btnUndo.setText("Undo");
+		
+		// handlers ---------------------------------------------------------------------------------------------
+		btnUndo.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDown(MouseEvent e) {
+				trainingInput.remove(trainingInput.size() - 1);
+			}
+		});
+		
+		btnNewButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDown(MouseEvent e) {
+				KSOMinputs ksomInputs = new KSOMinputs(trainingInput);
+				ksomInputs.setVisible(true);
+			}
+		});
+		
 		btnResults.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
@@ -144,8 +167,7 @@ public class KSOMgui {
 		btnSelectColor.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				JColorChooser colorChooser = new JColorChooser();
-				Color chosenColor = colorChooser.showDialog(null, "Color Picker", Color.RED);
+				Color chosenColor = JColorChooser.showDialog(null, "Color Picker", Color.RED);
 				Rlevels.setText(String.valueOf(chosenColor.getRed()));
 				Glevels.setText(String.valueOf(chosenColor.getGreen()));
 				Blevels.setText(String.valueOf(chosenColor.getBlue()));
@@ -195,29 +217,24 @@ public class KSOMgui {
 			@Override
 			public void mouseDown(MouseEvent e) {
 				int Rlevel, Blevel, Glevel;
-				if(Rlevels.getText().equals("")) {
-					Rlevel = 0;
+				if(Rlevels.getText().equals("") || Glevels.getText().equals("") || Blevels.getText().equals("")) {
+					JOptionPane.showMessageDialog(null, "Please enter a value for R,G,B", "Invalid Field", JOptionPane.ERROR_MESSAGE);
 				} else {
 					Rlevel = Integer.parseInt(Rlevels.getText());
-				}
-				if(Glevels.getText().equals("")) {
-					Glevel = 0;
-				} else {
 					Glevel = Integer.parseInt(Blevels.getText());
-				}
-				if(Blevels.getText().equals("")) {
-					Blevel = 0;
-				} else {
 					Blevel = Integer.parseInt(Glevels.getText());
+					trainingInput.add(new double[]{Rlevel, Glevel, Blevel});
+					Rlevels.setText("");
+					Glevels.setText("");
+					Blevels.setText("");
 				}
 				
-				trainingInput.add(new double[]{Rlevel, Glevel, Blevel});
 			}
 		});
 		
-		shell.open();
-		shell.layout();
-		while (!shell.isDisposed()) {
+		shlKsomNeuralNetwork.open();
+		shlKsomNeuralNetwork.layout();
+		while (!shlKsomNeuralNetwork.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
 			}
