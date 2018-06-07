@@ -6,7 +6,7 @@ import java.util.List;
 
 public class KSOMmain {
 	
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		ArrayList<double[]> trainingInput = new ArrayList<double[]>();
 		// shades of red
 		trainingInput.add(new double[]{51,0,0});
@@ -45,5 +45,5 @@ public class KSOMmain {
 		trainingInput = KSOM.NormalizeInputData(trainingInput);
 		ksom.SetPrintIntervals(Arrays.asList(0, 20, 40, 100, 1000));
 		ksom.Train(1000, trainingInput);
-	}
+	}*/
 } 
