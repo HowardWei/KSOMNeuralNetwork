@@ -8,6 +8,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JButton;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class KSOMresults extends JFrame {
 
@@ -20,7 +23,7 @@ public class KSOMresults extends JFrame {
 		setAlwaysOnTop(true);
 		setTitle("KSOM Results");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 1196, 441);
+		setBounds(100, 100, 1196, 494);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -49,6 +52,7 @@ public class KSOMresults extends JFrame {
 		image = new ImageIcon("neuronMapColoredEpoch100.jpg");   
 		lblEpoch100.setIcon(image);  
 		contentPane.add(lblEpoch100);
+
 		
 		JLabel lblEpoch1000 = new JLabel("");
 		lblEpoch1000.setBounds(938, 89, 200, 200);
@@ -75,5 +79,33 @@ public class KSOMresults extends JFrame {
 		JLabel lblEpoch_4 = new JLabel("Epoch 1000");
 		lblEpoch_4.setBounds(970, 28, 140, 33);
 		contentPane.add(lblEpoch_4);
+		
+		JButton btnNewButton = new JButton("New button");
+		btnNewButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				ImageIcon image = new ImageIcon("neuronMapColoredEpoch0.jpg");  
+				lblEpoch0.setIcon(image);   
+				contentPane.add(lblEpoch0);
+
+				image = new ImageIcon("neuronMapColoredEpoch20.jpg");   
+				lblEpoch20.setIcon(image);  
+				contentPane.add(lblEpoch20);
+
+				image = new ImageIcon("neuronMapColoredEpoch40.jpg");  
+				lblEpoch40.setIcon(image);   
+				contentPane.add(lblEpoch40);
+
+				image = new ImageIcon("neuronMapColoredEpoch100.jpg");   
+				lblEpoch100.setIcon(image);  
+				contentPane.add(lblEpoch100);
+
+				image = new ImageIcon("neuronMapColoredEpoch1000.jpg");    
+				lblEpoch1000.setIcon(image); 
+				contentPane.add(lblEpoch1000);
+			}
+		});
+		btnNewButton.setBounds(505, 337, 171, 41);
+		contentPane.add(btnNewButton);
 	}
 }
